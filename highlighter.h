@@ -11,6 +11,11 @@
 #include <QHash>
 
 
+// Custom hash function for QRegExp
+inline uint qHash(const QRegExp &key) {
+    return qHash(key.pattern()); // Use the pattern of QRegExp as the hash key
+}
+
 class Highlighter : public QSyntaxHighlighter {
 public:
     explicit Highlighter(QString _filename, QObject *parent = 0);

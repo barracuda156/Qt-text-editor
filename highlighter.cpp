@@ -1,6 +1,7 @@
 #include "highlighter.h"
 
 #include <QDebug>
+#include <QFile>
 
 Highlighter::Highlighter(const QString _filename, QObject *parent) : QSyntaxHighlighter(parent) {
     xml_filename=_filename;

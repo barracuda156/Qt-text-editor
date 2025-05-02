@@ -34,6 +34,7 @@
 #include "linenumberarea.h"
 #include "codeeditor.h"
 #include "highlighter.h"
+#include "customtabwidget.h"
 
 
 namespace Ui {
@@ -49,7 +50,7 @@ public:
     
 private:
     Ui::MainWindow *ui;
-    QTabWidget* tabs;
+    CustomTabWidget* tabs; // Use the custom class
     Highlighter* highlighter;
 
     QDirModel* file_system_model;

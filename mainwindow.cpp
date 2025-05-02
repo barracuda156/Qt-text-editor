@@ -32,12 +32,12 @@ void MainWindow::dragEnterEvent(QDragEnterEvent* drag_event) {
 void MainWindow::dropEvent(QDropEvent* drop_event) {
     QList<QUrl> url_list = drop_event->mimeData()->urls();
     foreach (QUrl url, url_list) {
-        OpenFile(url.url(QUrl::RemoveScheme));
+        OpenFile(url.toString(QUrl::RemoveScheme));
     }
 }
 
 void MainWindow::SetupTabWidget() {
-    tabs = new QTabWidget(this);
+    tabs = new CustomTabWidget(this);
     tabs->setMovable(true);
     tabs->setTabsClosable(true);
     tabs->setUsesScrollButtons(true);
@@ -113,11 +113,11 @@ void MainWindow::SetupOpenedDocsDock() {
     // update on opening/creating new file
     // delete on deleting tab provided by DeleteTabFromList(int) function
     // update position in list
-    connect(tabs->tabBar(),      SIGNAL(tabMoved(int, int)),            this, SLOT(ChangeTabIndexInList(int, int)));
+    connect(tabs->publicTabBar(),   SIGNAL(tabMoved(int, int)),        this, SLOT(ChangeTabIndexInList(int, int)));
     connect(opened_docs_widget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(UpdateCurrentIndex(QListWidgetItem*)));
     connect(opened_docs_widget, SIGNAL(currentRowChanged(int)),        tabs, SLOT(setCurrentIndex(int)));
-    connect(tabs->tabBar(),      SIGNAL(currentChanged(int)),           this, SLOT(UpdateCurrentIndex(int)));
-    connect(tabs->tabBar(),      SIGNAL(tabCloseRequested(int)),        this, SLOT(UpdateCurrentIndexOnDelete(int)));
+    connect(tabs->publicTabBar(),   SIGNAL(currentChanged(int)),       this, SLOT(UpdateCurrentIndex(int)));
+    connect(tabs->publicTabBar(),   SIGNAL(tabCloseRequested(int)),    this, SLOT(UpdateCurrentIndexOnDelete(int)));
 
     opened_docs_dock  = new QDockWidget("Opened files", this);
 
@@ -242,8 +242,8 @@ void MainWindow::SaveFileAs() {
         }
     }
     filename = filepath.section("/",-1,-1);
-    tabs->tabBar()->setTabText(tabs->currentIndex(), filename);
-    tabs->tabBar()->setTabToolTip(tabs->currentIndex(), filepath);
+    tabs->publicTabBar()->setTabText(tabs->currentIndex(), filename);
+    tabs->publicTabBar()->setTabToolTip(tabs->currentIndex(), filepath);
 
     QString file_extension = QFileInfo(filename).suffix(); // setting up highlight
     if (highlighter->setExtension(file_extension)) {
@@ -321,7 +321,7 @@ void MainWindow::closeEvent(QCloseEvent*) {
 
 void::MainWindow::UpdateParameter() {
     // highlight bad support (always changed)
-    QString file = tabs->tabBar()->tabText(tabs->currentIndex());
+    QString file = tabs->publicTabBar()->tabText(tabs->currentIndex());
     QString file_extension = QFileInfo(file).suffix();
     if (!file_extension.isEmpty()) {
         if (highlighter->setExtension(file_extension)) {
@@ -358,7 +358,7 @@ void MainWindow::UpdateCurrentIndex(int new_selection_index) {
     opened_docs_widget->setCurrentRow(new_selection_index);
 
     // + highlight update
-    QString file = tabs->tabBar()->tabText(new_selection_index);
+    QString file = tabs->publicTabBar()->tabText(new_selection_index);
     QString file_extension = QFileInfo(file).suffix();
     if (!file_extension.isEmpty()) {
         if (highlighter->setExtension(file_extension)) {
